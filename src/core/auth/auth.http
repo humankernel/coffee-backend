@@ -1,0 +1,19 @@
+
+### Login
+
+POST {{base_url}}/auth/login HTTP/1.1
+
+{
+    "username": "johndoe",
+    "password": "1234"
+}
+
+### Login Bad Request
+
+POST {{base_url}}/auth/login HTTP/1.1
+
+{
+    "user": "johndoe",
+    "pass": "1234"
+}
+
