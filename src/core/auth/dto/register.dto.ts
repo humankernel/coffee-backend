@@ -1,19 +1,21 @@
-import { IsDefined, IsEnum, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsString } from 'class-validator';
 import { Role } from 'src/users/entities/user.entity';
 
 export class RegisterDto {
+  @ApiProperty({ example: 'John Doe' })
   @IsString()
   name: string;
 
-  @IsDefined()
+  @ApiProperty({ example: 'john' })
   @IsString()
   username: string;
 
-  @IsDefined()
+  @ApiProperty({ example: '1234' })
   @IsString()
   password: string;
 
-  @IsDefined()
+  @ApiProperty({ enum: Role, example: 'customer' })
   @IsEnum(Role)
   role: Role;
 }
