@@ -22,13 +22,13 @@ export class UsersController {
   }
 
   @Get()
-  async findOneByUsername(@Query('username') username: string) {
-    return this.usersService.findByUsername(username);
+  async findAll() {
+    return this.usersService.findAll();
   }
 
   @Get()
-  async findAll() {
-    return this.usersService.findAll();
+  async findOneByUsername(@Query('username') username: string) {
+    return this.usersService.findByUsername(username);
   }
 
   @Get(':id')

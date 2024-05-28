@@ -6,8 +6,9 @@ export class PurchaseOrder {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Supplier)
-  supplier: Supplier;
+  // FIX
+  // @ManyToOne(() => Supplier)
+  // supplier: Supplier;
 
   @Column()
   createdAt: Date;
