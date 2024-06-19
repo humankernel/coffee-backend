@@ -28,11 +28,6 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get()
-  async findOneByUsername(@Query('username') username: string) {
-    return this.usersService.findByUsername(username);
-  }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
