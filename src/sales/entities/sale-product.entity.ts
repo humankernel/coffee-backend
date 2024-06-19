@@ -10,9 +10,8 @@ export class SaleProduct {
   @ManyToOne(() => Sale)
   sale: Sale;
 
-  // FIX:
-  // @ManyToOne(() => Product)
-  // product: Product;
+  @ManyToOne(() => Product)
+  product: Product;
 
   @Column()
   amount: number;
