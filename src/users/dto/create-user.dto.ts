@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { Role } from '../entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -6,6 +6,10 @@ export class CreateUserDto {
   @ApiProperty({ example: 'johndoe' })
   @IsString()
   name: string;
+
+  @ApiProperty({ example: '18' })
+  @IsNumber()
+  age: number;
 
   @ApiProperty({ example: 'john' })
   @IsString()

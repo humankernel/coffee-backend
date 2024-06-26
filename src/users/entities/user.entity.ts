@@ -15,6 +15,9 @@ export class User {
   @Column({ length: 255 })
   name: string;
 
+  @Column()
+  age: number;
+
   @Column({ length: 255 })
   username: string;
 

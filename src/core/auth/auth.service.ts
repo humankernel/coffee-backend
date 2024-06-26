@@ -24,7 +24,9 @@ export class AuthService {
     return { token };
   }
 
-  async register(registerDto: RegisterDto) {}
+  async register(registerDto: RegisterDto) {
+    console.log(registerDto);
+  }
 
   private async validateUser(username: string, pass: string): Promise<User> {
     const user = await this.usersService.findByUsername(username);
