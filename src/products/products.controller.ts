@@ -23,6 +23,7 @@ export class ProductsController {
 
   @Post('food')
   async create(@Body() createFoodDto: FoodProductDto) {
+    console.log(createFoodDto);
     return this.productsService.createFood(createFoodDto);
   }
 
