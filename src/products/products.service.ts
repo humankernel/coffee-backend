@@ -1,7 +1,10 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   CreateProductDto,
@@ -14,7 +17,7 @@ import {
   UpdateProductDto,
 } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
+import { Product, ProductType } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { Food } from './entities/food.entity';
 import { Drink } from './entities/drink.entity';
@@ -80,22 +83,46 @@ export class ProductsService {
     }
   }
 
-  async update(
-    id: number,
-    updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
-    throw new Error('Method not implemented.');
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    const productInDB = await this.productRepository.findOneBy({ id });
+
+    if (!productInDB)
+      throw new NotFoundException('product with that id does not exits');
+
+    const product = this.productRepository.create(updateProductDto);
+    return this.productRepository.update(id, product);
   }
 
   async updateFood(id: number, updateProductDto: UpdateFoodDto) {
-    throw new Error('Method not implemented.');
+    await this.update(id, updateProductDto);
+    const food = this.foodRepository.create(updateProductDto);
+    return this.foodRepository.update({ id }, food);
   }
 
-  async updateDrink(arg0: number, updateProductDto: UpdateDrinkDto) {
-    throw new Error('Method not implemented.');
+  async updateDrink(id: number, updateProductDto: UpdateDrinkDto) {
+    await this.update(id, updateProductDto);
+    const drink = this.drinkRepository.create(updateProductDto);
+    return this.drinkRepository.update({ id }, drink);
   }
 
   async remove(id: number) {
-    throw new Error('Method not implemented.');
+    const product = await this.productRepository.findOneBy({ id });
+
+    if (!product)
+      throw new NotFoundException('Product with that id does not exists');
+
+    if (product.type === ProductType.food) {
+      const food = await this.foodRepository.delete({ id });
+      await this.productRepository.delete({ id });
+      return { ...food, ...product };
+    } else if (product.type === ProductType.drink) {
+      const drink = await this.drinkRepository.delete({ id });
+      await this.productRepository.delete({ id });
+      return { ...drink, ...product };
+    } else if (product.type === ProductType.raw) {
+      const raw = await this.rawProductRepository.delete({ id });
+      await this.productRepository.delete({ id });
+      return { ...raw, ...product };
+    }
   }
 }

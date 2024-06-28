@@ -16,14 +16,13 @@ import {
 } from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('product')
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post('food')
   async create(@Body() createFoodDto: FoodProductDto) {
-    console.log(createFoodDto);
     return this.productsService.createFood(createFoodDto);
   }
 

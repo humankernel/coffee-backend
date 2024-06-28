@@ -19,7 +19,6 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     return this.usersService.create(createUserDto);
   }
 
@@ -35,7 +34,6 @@ export class UsersController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log({ updateUserDto });
     return this.usersService.update(+id, updateUserDto);
   }
 
