@@ -1,7 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
+import { Role, User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { LoginRes } from './types/login.response';
 import { RegisterDto } from './dto/register.dto';
@@ -25,14 +29,40 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    console.log(registerDto);
+    const userInDB = await this.usersService.findByUsername(
+      registerDto.username,
+    );
+    if (userInDB) throw new ConflictException('the user already exists');
+
+    // hash password
+    const hashedPassword = await this.hashPassword(registerDto.password);
+    const userToStore = {
+      ...registerDto,
+      password: hashedPassword,
+      role: Role.customer,
+    };
+
+    // create user
+    const user = await this.usersService.create(userToStore);
+
+    // create token
+    const payload = { sub: user.id, username: user.username, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+    return { token };
   }
 
-  private async validateUser(username: string, pass: string): Promise<User> {
+  private async hashPassword(plainPassword: string): Promise<string> {
+    return bcrypt.hash(plainPassword, 10);
+  }
+
+  private async validateUser(
+    username: string,
+    password: string,
+  ): Promise<User> {
     const user = await this.usersService.findByUsername(username);
     if (!user) return null;
 
-    const passwordMatch = await this.validatePassword(pass, user.password);
+    const passwordMatch = await this.validatePassword(password, user.password);
     if (passwordMatch) return user;
 
     return null;

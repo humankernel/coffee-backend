@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,11 +18,10 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const userInDB = await this.usersRepository.findOne({
-      where: { username: createUserDto.username },
+    const userInDB = await this.usersRepository.findOneBy({
+      username: createUserDto.username,
     });
-    if (userInDB)
-      throw new HttpException('user already exists', HttpStatus.CONFLICT);
+    if (userInDB) throw new ConflictException('user already exists');
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
     let user = this.usersRepository.create(createUserDto);

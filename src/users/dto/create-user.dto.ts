@@ -7,9 +7,8 @@ export class CreateUserDto {
   @IsString()
   name: string;
 
-  //FIX:
   @ApiProperty({ example: '18' })
-  @IsString()
+  @IsNumber()
   age: number;
 
   @ApiProperty({ example: 'john' })

@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateQDto } from './dto/create-q.dto';
 import { UpdateQDto } from './dto/update-q.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QS } from './entities/qs.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class QsService {
-  create(createQDto: CreateQDto) {
-    return 'This action adds a new q';
+  constructor(@InjectRepository(QS) private qsRepository: Repository<QS>) {}
+
+  async create(createQsDto: CreateQDto): Promise<QS> {
+    const qsInDB = await this.qsRepository.findOneBy({
+      desc: createQsDto.desc,
+    });
+    if (qsInDB)
+      throw new ConflictException('complaint or suggestion already exists');
+
+    const qs = this.qsRepository.create(createQsDto);
+    return this.qsRepository.save(qs);
   }
 
-  findAll() {
-    return `This action returns all qs`;
+  async findAll(): Promise<QS[]> {
+    return this.qsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} q`;
+  async findOne(id: number): Promise<QS> {
+    return this.qsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateQDto: UpdateQDto) {
-    return `This action updates a #${id} q`;
+  async update(id: number, updateQsDto: UpdateQDto) {
+    return this.qsRepository.update({ id }, updateQsDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} q`;
+  async remove(id: number) {
+    return this.qsRepository.delete({ id });
   }
 }

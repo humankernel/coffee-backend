@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { QsService } from './qs.service';
 import { CreateQDto } from './dto/create-q.dto';
 import { UpdateQDto } from './dto/update-q.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('qs')
 @Controller('qs')
 export class QsController {
   constructor(private readonly qsService: QsService) {}
