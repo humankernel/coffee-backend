@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import { Role, User } from 'src/users/entities/user.entity';
@@ -29,30 +25,7 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const userInDB = await this.usersService.findByUsername(
-      registerDto.username,
-    );
-    if (userInDB) throw new ConflictException('the user already exists');
-
-    // hash password
-    const hashedPassword = await this.hashPassword(registerDto.password);
-    const userToStore = {
-      ...registerDto,
-      password: hashedPassword,
-      role: Role.customer,
-    };
-
-    // create user
-    const user = await this.usersService.create(userToStore);
-
-    // create token
-    const payload = { sub: user.id, username: user.username, role: user.role };
-    const token = await this.jwtService.signAsync(payload);
-    return { token };
-  }
-
-  private async hashPassword(plainPassword: string): Promise<string> {
-    return bcrypt.hash(plainPassword, 10);
+    return this.usersService.create({ ...registerDto, role: Role.customer });
   }
 
   private async validateUser(
@@ -62,16 +35,17 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
     if (!user) return null;
 
-    const passwordMatch = await this.validatePassword(password, user.password);
-    if (passwordMatch) return user;
+    const passwordMatch = await this.comparePasswords(password, user.password);
+    console.log('validate-user', { passwordMatch });
+    if (!passwordMatch) return null;
 
-    return null;
+    return user;
   }
 
-  private async validatePassword(
+  private async comparePasswords(
     plain: string,
-    encrypted: string,
+    hashed: string,
   ): Promise<boolean> {
-    return bcrypt.compare(plain, encrypted);
+    return bcrypt.compare(plain, hashed);
   }
 }
