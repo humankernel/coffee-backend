@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // cors
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://172.25.104.156:3000'],
+    origin: ['http://localhost:3000'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   });
 
