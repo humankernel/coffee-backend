@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -23,7 +18,7 @@ export class UsersService {
     });
     if (userInDB) throw new ConflictException('user already exists');
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
+    const hashedPassword = await this.hashPassword(createUserDto.password);
     let user = this.usersRepository.create(createUserDto);
     user = { ...user, password: hashedPassword };
     return this.usersRepository.save(user);
@@ -47,5 +42,9 @@ export class UsersService {
 
   remove(id: number) {
     return this.usersRepository.delete({ id });
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 8);
   }
 }
