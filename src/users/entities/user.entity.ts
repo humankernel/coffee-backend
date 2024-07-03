@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Sale } from 'src/sales/entities/sale.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum Role {
   manager = 'manager',
@@ -26,4 +27,7 @@ export class User {
 
   @Column({ type: 'enum', enum: Role, default: Role.customer })
   role: Role;
+
+  @OneToMany(() => Sale, (sale) => sale.user)
+  sale: Sale;
 }

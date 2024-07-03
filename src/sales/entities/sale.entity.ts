@@ -1,5 +1,12 @@
 import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { SaleProduct } from './sale-product.entity';
 
 @Entity()
 export class Sale {
@@ -11,4 +18,7 @@ export class Sale {
 
   @Column()
   createdAt: Date;
+
+  @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.sale)
+  saleProduct: SaleProduct[];
 }

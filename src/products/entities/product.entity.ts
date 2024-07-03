@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { SaleProduct } from 'src/sales/entities/sale-product.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum ProductType {
   food = 'food',
@@ -34,4 +35,7 @@ export class Product {
 
   @Column({ type: 'int', default: 0 })
   people: number;
+
+  @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.product)
+  saleProduct: SaleProduct;
 }
