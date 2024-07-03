@@ -11,5 +11,6 @@ import { RawProduct } from './entities/raw-product.entity';
   imports: [TypeOrmModule.forFeature([Product, Drink, Food, RawProduct])],
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

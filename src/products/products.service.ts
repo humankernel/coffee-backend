@@ -22,6 +22,7 @@ import { Repository } from 'typeorm';
 import { Food } from './entities/food.entity';
 import { Drink } from './entities/drink.entity';
 import { RawProduct } from './entities/raw-product.entity';
+import { SearchParams } from './dto/search-params.dto';
 
 @Injectable()
 export class ProductsService {
@@ -62,7 +63,8 @@ export class ProductsService {
     return this.productRepository.save(createProductDto);
   }
 
-  async findAll() {
+  async findAll(query: SearchParams) {
+    // TODO:
     return this.productRepository.find();
   }
 
