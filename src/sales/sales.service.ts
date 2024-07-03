@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSaleDto } from './dto/create-sale.dto';
-import { UpdateSaleDto } from './dto/update-sale.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Sale } from './entities/sale.entity';
 import { Repository } from 'typeorm';
 import { SaleProduct } from './entities/sale-product.entity';
+import { UsersService } from 'src/users/users.service';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class SalesService {
@@ -12,24 +13,59 @@ export class SalesService {
     @InjectRepository(Sale) private saleRepository: Repository<Sale>,
     @InjectRepository(SaleProduct)
     private saleProductRepository: Repository<SaleProduct>,
+    private readonly usersService: UsersService,
+    private readonly productsService: ProductsService,
   ) {}
-  create(createSaleDto: CreateSaleDto) {
+  async create(createSaleDto: CreateSaleDto) {
+    const user = await this.usersService.findOne(createSaleDto.userId);
+    if (!user) throw new NotFoundException('user does not exists');
+
+    for (const cartItem of createSaleDto.cart) {
+      const product = await this.productsService.findOne(cartItem.id);
+      if (!product) throw new NotFoundException('product does not exists');
+
+      const sale = this.saleRepository.create({
+        user,
+        createdAt: new Date(),
+      });
+      const saleInDB = await this.saleRepository.save(sale);
+
+      const productSale = this.saleProductRepository.create({
+        sale: saleInDB,
+        product: product,
+        amount: cartItem.count,
+      });
+      await this.saleProductRepository.save(productSale);
+    }
+
     return 'This action adds a new sale';
   }
 
-  async findAll() {
-    return this.saleProductRepository.find();
+  async findAll(): Promise<SaleProduct[]> {
+    return this.saleProductRepository.find({
+      relations: { sale: { user: true }, product: true },
+      select: {
+        sale: {
+          id: true,
+          user: { id: true, name: true, username: true },
+          createdAt: true,
+        },
+        product: { id: true, name: true, price: true },
+        amount: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sale`;
+  async findOne(id: number) {
+    return this.saleRepository.findOneBy({ id });
   }
 
-  update(id: number, updateSaleDto: UpdateSaleDto) {
-    return `This action updates a #${id} sale`;
+  // FIX:
+  async update(id: number, updateSaleDto: any) {
+    return this.saleRepository.update({ id }, updateSaleDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} sale`;
+    return this.saleRepository.delete({ id });
   }
 }
