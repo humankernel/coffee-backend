@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: coffee-db
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: coffee
+    ports:
+      - "5432:5432"
