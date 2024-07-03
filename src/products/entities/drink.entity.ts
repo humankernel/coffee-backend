@@ -21,9 +21,11 @@ export enum Temp {
 @Entity()
 export class Drink {
   @PrimaryGeneratedColumn()
+  id: number
+
   @OneToOne(() => Product)
-  @JoinColumn({ name: 'id' })
-  id: number;
+  @JoinColumn()
+  product: Product;
 
   @Column({ type: 'enum', enum: Size })
   size: Size;

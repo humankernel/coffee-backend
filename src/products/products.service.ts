@@ -32,12 +32,12 @@ export class ProductsService {
     private rawProductRepository: Repository<RawProduct>,
     @InjectRepository(Food) private foodRepository: Repository<Food>,
     @InjectRepository(Drink) private drinkRepository: Repository<Drink>,
-  ) {}
+  ) { }
 
   async createDrink(createDrinkDto: DrinkProductDto): Promise<Drink> {
     const insertedProduct = await this.create(createDrinkDto);
 
-    const drink = this.drinkRepository.create(createDrinkDto);
+    const drink = this.drinkRepository.create({ ...createDrinkDto, product: insertedProduct });
     const insertedDrink = await this.drinkRepository.save(drink);
 
     return { ...insertedProduct, ...insertedDrink };
@@ -46,7 +46,7 @@ export class ProductsService {
   async createFood(createFoodDto: FoodProductDto): Promise<Food> {
     const insertedProduct = await this.create(createFoodDto);
 
-    const food = this.foodRepository.create(createFoodDto);
+    const food = this.foodRepository.create({ ...createFoodDto, product: insertedProduct });
     const insertedFood = await this.foodRepository.save(food);
 
     return { ...insertedProduct, ...insertedFood };
@@ -114,11 +114,16 @@ export class ProductsService {
       throw new NotFoundException('Product with that id does not exists');
 
     if (product.type === ProductType.food) {
-      const food = await this.foodRepository.delete({ id });
-      await this.productRepository.delete({ id });
+      const foodInDB = await this.foodRepository.findOneBy({product})
+      if (!foodInDB) throw new NotFoundException("food with that id doesn't exists")
+
+      const food = await this.foodRepository.delete({ id: foodInDB.id });
+      await this.productRepository.delete({  });
       return { ...food, ...product };
     } else if (product.type === ProductType.drink) {
-      const drink = await this.drinkRepository.delete({ id });
+      const drinkInDB = await this.drinkRepository.findOneBy({product})
+      if (!drinkInDB) throw new NotFoundException("drink with that id doesn't exists")
+        const drink = await this.drinkRepository.delete({ id: drinkInDB.id });
       await this.productRepository.delete({ id });
       return { ...drink, ...product };
     } else if (product.type === ProductType.raw) {
