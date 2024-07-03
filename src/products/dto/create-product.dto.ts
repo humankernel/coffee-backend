@@ -59,11 +59,11 @@ export class CreateProductDto {
 
 export class FoodProductDto extends CreateProductDto {
   @ApiProperty({ example: 'icecream' })
-  @IsString()
+  // @IsString()
   food_type: string;
 
   @ApiProperty({ example: ['milk', 'cream'] })
-  @IsArray()
+  // @IsArray()
   ingredients: string[];
 }
 
