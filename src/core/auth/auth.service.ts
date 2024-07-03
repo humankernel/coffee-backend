@@ -36,7 +36,6 @@ export class AuthService {
     if (!user) return null;
 
     const passwordMatch = await this.comparePasswords(password, user.password);
-    console.log('validate-user', { passwordMatch });
     if (!passwordMatch) return null;
 
     return user;
