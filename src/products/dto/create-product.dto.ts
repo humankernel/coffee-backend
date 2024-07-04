@@ -1,6 +1,5 @@
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsInt,
   IsNumber,
@@ -63,7 +62,7 @@ export class FoodProductDto extends CreateProductDto {
   food_type: string;
 
   @ApiProperty({ example: ['milk', 'cream'] })
-  // @IsArray()
+  @IsArray()
   ingredients: string[];
 }
 
@@ -72,15 +71,11 @@ export class DrinkProductDto extends CreateProductDto {
   @IsEnum(Size)
   size: Size;
 
-  @ApiProperty({ example: false })
-  @IsBoolean()
-  sugar: boolean;
-
   @ApiProperty({ enum: Temp, example: 'hot' })
   @IsEnum(Temp)
   temp: Temp;
 
   @ApiProperty({ example: 'coffee' })
   @IsString()
-  drink_type: string;
+  drinkType: string;
 }

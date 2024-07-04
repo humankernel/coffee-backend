@@ -5,7 +5,7 @@ import { Sale } from './entities/sale.entity';
 import { Repository } from 'typeorm';
 import { SaleProduct } from './entities/sale-product.entity';
 import { UsersService } from 'src/users/users.service';
-import { ProductsService } from 'src/products/products.service';
+import { ProductsService } from 'src/products/services/products.service';
 
 @Injectable()
 export class SalesService {

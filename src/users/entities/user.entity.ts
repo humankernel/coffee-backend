@@ -4,8 +4,8 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 export enum Role {
   manager = 'manager',
   almacenero = 'almacenero',
-  customer = 'customer',
   supplier = 'supplier',
+  customer = 'customer',
 }
 
 @Entity()
@@ -13,20 +13,23 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @Column({ type: 'int' })
   age: number;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   username: string;
 
-  @Column({ length: 255 })
+  @Column({ type: 'varchar' })
   password: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.customer })
   role: Role;
+
+  @Column({ name: 'is_active', type: 'bool', default: true })
+  isActive: boolean;
 
   @OneToMany(() => Sale, (sale) => sale.user)
   sale: Sale;

@@ -21,7 +21,7 @@ export enum Temp {
 @Entity()
 export class Drink {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @OneToOne(() => Product)
   @JoinColumn()
@@ -30,12 +30,9 @@ export class Drink {
   @Column({ type: 'enum', enum: Size })
   size: Size;
 
-  @Column({ type: 'boolean' })
-  sugar: boolean;
-
   @Column({ type: 'enum', enum: Temp })
   temp: Temp;
 
   @Column({ length: 255 })
-  drink_type: string;
+  drinkType: string;
 }

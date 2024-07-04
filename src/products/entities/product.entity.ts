@@ -1,7 +1,5 @@
 import { SaleProduct } from 'src/sales/entities/sale-product.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
-import { Drink } from './drink.entity';
-import { Food } from './food.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum ProductType {
   food = 'food',

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,15 +17,18 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const userInDB = await this.usersRepository.findOneBy({
-      username: createUserDto.username,
-    });
-    if (userInDB) throw new ConflictException('user already exists');
+    const { username } = createUserDto;
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    if (existingUser)
+      throw new ConflictException(`username "${username}" already in use`);
 
-    const hashedPassword = await this.hashPassword(createUserDto.password);
-    let user = this.usersRepository.create(createUserDto);
-    user = { ...user, password: hashedPassword };
-    return this.usersRepository.save(user);
+    const { password } = createUserDto;
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    let newUser = this.usersRepository.create(createUserDto);
+    newUser = { ...newUser, password: hashedPassword };
+
+    return this.usersRepository.save(newUser);
   }
 
   async findAll(): Promise<User[]> {
@@ -29,22 +36,39 @@ export class UsersService {
   }
 
   async findByUsername(username: string): Promise<User> {
-    return this.usersRepository.findOneBy({ username });
+    const existingUser = await this.usersRepository.findOneBy({ username });
+    if (!existingUser)
+      throw new NotFoundException(`user with username "${username}" not found`);
+    return existingUser;
   }
 
-  findOne(id: number) {
-    return this.usersRepository.findOneBy({ id });
+  async findOne(id: number): Promise<User> {
+    const existingUser = await this.usersRepository.findOneBy({ id });
+    if (!existingUser)
+      throw new NotFoundException(`user with id "${id}" not found`);
+    return existingUser;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update({ id }, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const existingUser = await this.findOne(id);
+    if (!existingUser)
+      throw new NotFoundException(`user with id "${id}" not found`);
+
+    await this.usersRepository.update(id, updateUserDto);
+
+    const updatedUser = await this.findOne(id);
+    if (!updatedUser)
+      throw new NotFoundException(`user with id "${id}" not found`);
+
+    return updatedUser;
   }
 
-  remove(id: number) {
-    return this.usersRepository.delete({ id });
-  }
+  async remove(id: number): Promise<User> {
+    const existingUser = await this.findOne(id);
+    if (!existingUser)
+      throw new NotFoundException(`user with id "${id}" not found`);
 
-  private async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 8);
+    await this.usersRepository.update(id, { isActive: false });
+    return existingUser;
   }
 }

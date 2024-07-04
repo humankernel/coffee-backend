@@ -10,14 +10,14 @@ import { Product } from './product.entity';
 @Entity()
 export class Food {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @OneToOne(() => Product)
   @JoinColumn()
   product: Product;
 
   @Column({ length: 255 })
-  food_type: string;
+  foodType: string;
 
   @Column('simple-array')
   ingredients: string[];
