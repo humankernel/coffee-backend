@@ -18,27 +18,27 @@ export class QsController {
   constructor(private readonly qsService: QsService) {}
 
   @Post()
-  create(@Body() createQDto: CreateQDto) {
+  async create(@Body() createQDto: CreateQDto) {
     return this.qsService.create(createQDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.qsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.qsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQDto: UpdateQDto) {
+  async update(@Param('id') id: string, @Body() updateQDto: UpdateQDto) {
     return this.qsService.update(+id, updateQDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.qsService.remove(+id);
   }
 }
