@@ -36,6 +36,9 @@ export class Product {
   @Column({ type: 'int', default: 0 })
   people: number;
 
+  @Column({ type: 'date', default: new Date() })
+  createdAt: number;
+
   @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.product)
   saleProduct: SaleProduct;
 }
