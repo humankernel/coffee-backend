@@ -18,6 +18,7 @@ export class AuthService {
     const user = await this.validateUser(loginDto.username, loginDto.password);
     if (!user)
       throw new UnauthorizedException('username or password are incorrect');
+    if (!user.isActive) throw new UnauthorizedException('user is inactive');
 
     const payload = { sub: user.id, username: user.username, role: user.role };
     const token = await this.jwtService.signAsync(payload);
