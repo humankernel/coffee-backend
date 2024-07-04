@@ -7,7 +7,12 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../entities/product.entity';
-import { Repository } from 'typeorm';
+import {
+  FindOptionsOrderValue,
+  FindOptionsUtils,
+  ILike,
+  Repository,
+} from 'typeorm';
 import { SearchParams } from '../dto/search-params.dto';
 
 @Injectable()
@@ -28,12 +33,16 @@ export class ProductsService {
   }
 
   async findAll({ sort, filter }: SearchParams): Promise<Product[]> {
+    const orderOps = {
+      newest: 'ASC',
+      oldest: 'DESC',
+    };
     let order = 'ASC';
-    if (sort === 'oldest') order = 'DESC';
+    if (sort) order = orderOps[sort];
 
     return this.productRepository.find({
-      where: { name: filter },
-      order: { name: order as any },
+      where: { name: filter ? ILike(`%${filter}%`) : undefined },
+      order: { createdAt: order as FindOptionsOrderValue },
     });
   }
 

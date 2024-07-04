@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Food } from '../entities/food.entity';
 import { SearchParams } from '../dto/search-params.dto';
 import { ProductsService } from './products.service';
@@ -11,7 +11,8 @@ import { FoodProductDto } from '../dto/create-product.dto';
 export class FoodService {
   constructor(
     @InjectRepository(Food) private foodRepository: Repository<Food>,
-    @Inject() private productService: ProductsService,
+    private productService: ProductsService,
+    private dataSource: DataSource,
   ) {}
 
   async create(createFoodDto: FoodProductDto): Promise<Food> {
@@ -32,7 +33,7 @@ export class FoodService {
     return { ...product, ...drink };
   }
 
-  async update(id: number, updateFoodDto: UpdateFoodDto) {
+  async update(id: number, updateFoodDto: UpdateFoodDto): Promise<Food> {
     const product = await this.productService.update(id, updateFoodDto);
     const drink = this.foodRepository.create(updateFoodDto);
 
@@ -40,11 +41,22 @@ export class FoodService {
     return { ...product, ...drink };
   }
 
-  async remove(id: number) {
-    const product = this.productService.remove(id);
-    const drink = this.findOne(id);
+  async remove(id: number): Promise<Food> {
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    await this.foodRepository.delete(id);
-    return { ...product, ...drink };
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const product = await this.productService.findOne(id);
+      const food = await this.foodRepository.findOneBy({ product });
+      await this.foodRepository.delete({ id: food.id });
+      const deletedProduct = await this.productService.remove(id);
+      return { ...deletedProduct, ...food };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

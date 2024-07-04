@@ -14,7 +14,7 @@ import { DrinkProductDto } from '../dto/create-product.dto';
 import { SearchParams } from '../dto/search-params.dto';
 import { UpdateDrinkDto } from '../dto/update-product.dto';
 
-@ApiTags('products/drink')
+@ApiTags('products')
 @Controller('products/drink')
 export class DrinkController {
   constructor(private readonly drinkService: DrinkService) {}
