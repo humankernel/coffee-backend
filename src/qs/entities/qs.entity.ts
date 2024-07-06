@@ -5,6 +5,12 @@ export enum QsType {
   suggestion = 'suggestion',
 }
 
+export enum Status {
+  resolved = 'resolved',
+  rejected = 'rejected',
+  pending = 'pending',
+}
+
 @Entity()
 export class QS {
   @PrimaryGeneratedColumn()
@@ -16,8 +22,9 @@ export class QS {
   @Column({ default: new Date() })
   createdAt: Date;
 
-  //FIX add new field for status
-
   @Column({ type: 'enum', enum: QsType })
   type: QsType;
+
+  @Column({ type: 'enum', enum: Status, default: Status.pending })
+  status: Status;
 }
