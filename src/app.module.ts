@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './core/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { SuppliersModule } from './suppliers/suppliers.module';
 import { ProductsModule } from './products/products.module';
 import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
 import { SalesModule } from './sales/sales.module';
@@ -30,7 +29,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     AuthModule,
     UsersModule,
-    SuppliersModule,
     ProductsModule,
     PurchaseOrdersModule,
     SalesModule,
