@@ -7,12 +7,7 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../entities/product.entity';
-import {
-  FindOptionsOrderValue,
-  FindOptionsUtils,
-  ILike,
-  Repository,
-} from 'typeorm';
+import { FindOptionsOrderValue, ILike, Repository } from 'typeorm';
 import { SearchParams } from '../dto/search-params.dto';
 
 @Injectable()
