@@ -1,5 +1,4 @@
-import { Sale } from 'src/sales/entities/sale.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum Role {
   manager = 'manager',
@@ -30,7 +29,4 @@ export class User {
 
   @Column({ name: 'is_active', type: 'bool', default: true })
   isActive: boolean;
-
-  @OneToMany(() => Sale, (sale) => sale.user)
-  sale: Sale;
 }

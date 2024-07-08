@@ -16,7 +16,7 @@ export class CartItem {
   @IsNotEmpty()
   @IsInt()
   @Min(1)
-  count: number;
+  amount: number;
 }
 
 export class CreateSaleDto {
@@ -24,10 +24,10 @@ export class CreateSaleDto {
   @IsInt()
   userId: number;
 
-  @ApiProperty({ example: { id: 1, count: 3 } })
+  @ApiProperty({ example: [{ id: 1, amount: 3 }] })
   @ValidateNested({ each: true })
   @Type(() => CartItem)
-  cart: { id: number; count: number }[];
+  products: CartItem[];
 }
 
 export class SaleDto {
