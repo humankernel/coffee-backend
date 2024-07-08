@@ -1,4 +1,4 @@
-import { SaleProduct } from 'src/sales/entities/sale-product.entity';
+import { Report } from '../../reports/entities/report.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum ProductType {
@@ -27,7 +27,7 @@ export class Product {
   @Column({ type: 'int', default: 0 })
   stock: number;
 
-  @Column({ type: 'float', default: 0 })
+  @Column({ type: 'float', default: 0.0 })
   discount: number;
 
   @Column({ type: 'int', default: 0 })
@@ -36,9 +36,9 @@ export class Product {
   @Column({ type: 'int', default: 0 })
   people: number;
 
-  @Column({ type: 'date', default: new Date() })
+  @Column('date', { name: 'created_at', default: new Date() })
   createdAt: number;
 
-  @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.product)
-  saleProduct: SaleProduct;
+  @OneToMany(() => Report, (report) => report.product)
+  report: Report[];
 }

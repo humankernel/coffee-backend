@@ -23,16 +23,19 @@ export class Drink {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Product)
-  @JoinColumn()
-  product: Product;
-
-  @Column({ type: 'enum', enum: Size })
+  @Column('enum', { enum: Size })
   size: Size;
 
-  @Column({ type: 'enum', enum: Temp })
+  @Column('enum', { enum: Temp })
   temp: Temp;
 
-  @Column({ length: 255 })
+  @Column('varchar', { name: 'drink_type', length: 255 })
   drinkType: string;
+
+  @OneToOne(() => Product, (product) => product.id)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
+
+  @Column('int', { name: 'product_id' })
+  productId: number;
 }

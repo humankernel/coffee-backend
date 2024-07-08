@@ -12,7 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { FoodService } from '../services/food.service';
 import { FoodProductDto } from '../dto/create-product.dto';
 import { SearchParams } from '../dto/search-params.dto';
-import { UpdateDrinkDto } from '../dto/update-product.dto';
+import { UpdateFoodDto } from '../dto/update-product.dto';
 
 @ApiTags('products')
 @Controller('products/food')
@@ -35,11 +35,8 @@ export class FoodController {
   }
 
   @Patch(':id')
-  async updateDrink(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateDrinkDto,
-  ) {
-    return this.foodService.update(+id, updateProductDto);
+  async update(@Param('id') id: string, @Body() updateFoodDto: UpdateFoodDto) {
+    return this.foodService.update(+id, updateFoodDto);
   }
 
   @Delete(':id')

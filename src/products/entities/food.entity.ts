@@ -12,13 +12,16 @@ export class Food {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Product)
-  @JoinColumn()
-  product: Product;
-
-  @Column({ length: 255 })
+  @Column('varchar', { length: 255 })
   foodType: string;
 
   @Column('simple-array')
   ingredients: string[];
+
+  @OneToOne(() => Product, (product) => product.id)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
+
+  @Column('int', { name: 'product_id' })
+  productId: number;
 }

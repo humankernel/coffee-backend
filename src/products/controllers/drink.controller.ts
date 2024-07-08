@@ -39,7 +39,7 @@ export class DrinkController {
     @Param('id') id: string,
     @Body() updateDrinkDto: UpdateDrinkDto,
   ) {
-    return this.drinkService.updateDrink(+id, updateDrinkDto);
+    return this.drinkService.update(+id, updateDrinkDto);
   }
 
   @Delete(':id')
