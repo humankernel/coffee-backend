@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Sale } from './entities/sale.entity';
 import { Repository } from 'typeorm';
 import { SaleProduct } from './entities/sale-product.entity';
-import { UsersService } from 'src/users/users.service';
-import { ProductsService } from 'src/products/services/products.service';
+import { ProductsService } from '../products/services/products.service';
+import { UsersService } from '../users/services/users.service';
 
 @Injectable()
 export class SalesService {
@@ -20,7 +20,7 @@ export class SalesService {
     const user = await this.usersService.findOne(createSaleDto.userId);
     if (!user) throw new NotFoundException('user does not exists');
 
-    for (const cartItem of createSaleDto.cart) {
+    for (const cartItem of createSaleDto.products) {
       const product = await this.productsService.findOne(cartItem.id);
       if (!product) throw new NotFoundException('product does not exists');
 
@@ -33,7 +33,7 @@ export class SalesService {
       const productSale = this.saleProductRepository.create({
         sale: saleInDB,
         product: product,
-        amount: cartItem.count,
+        amount: cartItem.amount,
       });
       await this.saleProductRepository.save(productSale);
     }

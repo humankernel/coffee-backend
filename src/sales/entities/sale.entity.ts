@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Entity,
   Column,
@@ -13,12 +13,12 @@ export class Sale {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.id)
   user: User;
 
   @Column()
   createdAt: Date;
 
-  @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.sale)
-  saleProduct: SaleProduct[];
+  // @OneToMany(() => SaleProduct, (saleProduct) => saleProduct.sale)
+  // saleProduct: SaleProduct[];
 }
