@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from '../../products/entities/product.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+
+export enum ReportType {
+  missing = 'missing',
+  surplus = 'surplus',
+}
 
 @Entity()
 export class Report {
@@ -6,14 +12,17 @@ export class Report {
   id: number;
 
   @Column('text')
-  description: string;
+  desc: string;
 
-  @Column()
+  @Column('date', { name: 'created_at', default: new Date() })
   createdAt: Date;
 
-  @Column({
-    type: 'enum',
-    enum: ['missing', 'surplus'],
-  })
-  type: string;
+  @Column('enum', { enum: ReportType })
+  type: ReportType;
+
+  @ManyToOne(() => Product, (product) => product.report)
+  product: Product;
+
+  // @Column('int', { name: 'product_id' })
+  // productId: number;
 }
