@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -28,6 +29,7 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty({ enum: Role, example: 'manager' })
+  @IsOptional()
   @IsEnum(Role)
-  role: Role;
+  role?: Role;
 }
